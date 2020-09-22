@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository, UpdateResult } from 'typeorm';
 import { CreateProjectDto } from './dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -18,8 +14,8 @@ export class ProjectService {
     private projectRepository: Repository<Project>,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto): Promise<Project> {
-    const entity = Object.assign(new Project(), createProjectDto);
+  async create(params: CreateProjectDto & { createdBy: number }): Promise<Project> {
+    const entity = Object.assign(new Project(), params);
     return this.projectRepository.save(entity);
   }
 

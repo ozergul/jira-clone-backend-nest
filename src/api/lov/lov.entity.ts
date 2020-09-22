@@ -1,4 +1,4 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { LovType } from './enum';
 import { DateAudit } from '../../shared/entities';
 
@@ -18,9 +18,4 @@ export class Lov extends DateAudit {
 
   @Column('text')
   text: string;
-
-  @BeforeUpdate()
-  updateTimestamp() {
-    this.updatedAt = new Date();
-  }
 }

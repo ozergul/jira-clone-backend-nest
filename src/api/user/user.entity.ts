@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import { Exclude } from 'class-transformer';
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DateAudit } from '../../shared/entities';
 
 @Entity('users')
@@ -23,11 +23,6 @@ export class User extends DateAudit {
 
   @Column({ type: 'text', default: 'tr-TR' })
   language: string;
-
-  @BeforeUpdate()
-  updateTimestamp() {
-    this.updatedAt = new Date();
-  }
 
   @BeforeInsert()
   async hashPassword() {

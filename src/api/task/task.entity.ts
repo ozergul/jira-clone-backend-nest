@@ -1,4 +1,4 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DateAudit } from '../../shared/entities';
 
 @Entity('tasks')
@@ -20,9 +20,4 @@ export class Task extends DateAudit {
 
   @Column('int')
   assigneeId: number;
-
-  @BeforeUpdate()
-  updateTimestamp() {
-    this.updatedAt = new Date();
-  }
 }

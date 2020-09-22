@@ -1,4 +1,4 @@
-import { Column } from 'typeorm';
+import { BeforeUpdate, Column } from 'typeorm';
 
 export abstract class DateAudit {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -6,4 +6,9 @@ export abstract class DateAudit {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
+
+  @BeforeUpdate()
+  updateTimestamp() {
+    this.updatedAt = new Date();
+  }
 }

@@ -8,7 +8,9 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -17,6 +19,8 @@ import { CreateProjectDto } from './dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './project.entity';
 import { ProjectService } from './project.service';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '../user/user.entity';
 
 @ApiTags('projects')
 @Controller('/projects')
@@ -24,10 +28,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Get()
-  async paginate(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ): Promise<Pagination<Project>> {
+  async paginate(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<Pagination<Project>> {
     return await this.projectService.paginate({
       page,
       limit,
@@ -40,10 +41,9 @@ export class ProjectController {
   }
 
   @Post('/create')
-  async create(
-    @Res() res: Response,
-    @Body() createProjectDto: CreateProjectDto,
-  ) {
+  @UseGuards(AuthGuard('jwt'))
+  async create(@Req() req, @Res() res: Response, @Body() createProjectDto: CreateProjectDto) {
+    const user = req.user as User;
     const code = createProjectDto.code;
     const isExist = await this.projectService.findByCode(code);
 
@@ -53,7 +53,7 @@ export class ProjectController {
       });
     }
 
-    const project = await this.projectService.create(createProjectDto);
+    const project = await this.projectService.create({ ...createProjectDto, createdBy: user.id });
 
     if (project) {
       res.status(HttpStatus.OK).send();
@@ -63,10 +63,8 @@ export class ProjectController {
   }
 
   @Put('/update')
-  async update(
-    @Res() res: Response,
-    @Body() updateProjectDto: UpdateProjectDto,
-  ) {
+  @UseGuards(AuthGuard('jwt'))
+  async update(@Req() req, @Res() res: Response, @Body() updateProjectDto: UpdateProjectDto) {
     const updated = await this.projectService.update(updateProjectDto);
 
     if (updated) {
@@ -76,8 +74,9 @@ export class ProjectController {
     }
   }
 
-  @Post('/complete')
-  async completeProject(@Res() res: Response, @Body() { id }: { id: number }) {
+  @Post('/complete/:id')
+  async completeProject(@Res() res: Response, @Param() params) {
+    const id = params.id;
     const completed = await this.projectService.complete(id);
     if (completed) {
       const updatedLastEntity = await this.projectService.findById(id);
