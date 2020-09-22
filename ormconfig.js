@@ -17,4 +17,5 @@ module.exports = {
   port: env('DB_PORT'),
   username: env('DB_USERNAME'),
   password: env('DB_PASSWORD'),
+  synchronize: true,
 };

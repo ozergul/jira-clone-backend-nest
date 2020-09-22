@@ -25,6 +25,10 @@ export class UserService {
     return this.userRepository.findOne({ email });
   }
 
+  async findOneWithId(id: number): Promise<User> {
+    return this.userRepository.findOne({ id });
+  }
+
   async deleteById(id: number): Promise<DeleteResult> {
     return this.userRepository.delete({ id });
   }
