@@ -17,5 +17,7 @@ module.exports = {
   port: env('DB_PORT'),
   username: env('DB_USERNAME'),
   password: env('DB_PASSWORD'),
-  synchronize: true,
+  synchronize: env('DB_SYNCHRONIZE') === 'true',
+  seeds: [env('TYPEORM_SEEDING_SEEDS')],
+  factories: [env('TYPEORM_SEEDING_FACTORIES')],
 };
