@@ -21,6 +21,7 @@ import { Project } from './project.entity';
 import { ProjectService } from './project.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
+import { ProjectGuard } from './project.guard';
 
 @ApiTags('projects')
 @Controller('/projects')
@@ -28,14 +29,20 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Get()
-  async paginate(@Query('page') page: number = 1, @Query('limit') limit: number = 10): Promise<Pagination<Project>> {
-    return await this.projectService.paginate({
-      page,
-      limit,
-    });
+  @UseGuards(AuthGuard('jwt'))
+  async paginate(@Req() req, @Query('page') page = 1, @Query('limit') limit = 10): Promise<Pagination<Project>> {
+    const user = req.user as User;
+    return await this.projectService.paginate(
+      {
+        page,
+        limit,
+      },
+      user.id,
+    );
   }
 
   @Get('/:code')
+  @UseGuards(AuthGuard('jwt'))
   async getByCode(@Param() params): Promise<Project> {
     return await this.projectService.findByCode(params.code);
   }
@@ -63,8 +70,8 @@ export class ProjectController {
   }
 
   @Put('/update')
-  @UseGuards(AuthGuard('jwt'))
-  async update(@Req() req, @Res() res: Response, @Body() updateProjectDto: UpdateProjectDto) {
+  @UseGuards(AuthGuard('jwt'), ProjectGuard)
+  async update(@Res() res: Response, @Body() updateProjectDto: UpdateProjectDto) {
     const updated = await this.projectService.update(updateProjectDto);
 
     if (updated) {
@@ -75,6 +82,7 @@ export class ProjectController {
   }
 
   @Post('/complete/:id')
+  @UseGuards(AuthGuard('jwt'), ProjectGuard)
   async completeProject(@Res() res: Response, @Param() params) {
     const id = params.id;
     const completed = await this.projectService.complete(id);
@@ -88,6 +96,7 @@ export class ProjectController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard('jwt'), ProjectGuard)
   async delete(@Res() res: Response, @Param() params) {
     const deleted = await this.projectService.delete(params.id);
     if (deleted) {
