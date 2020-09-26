@@ -32,13 +32,13 @@ export class ProjectController {
   @UseGuards(AuthGuard('jwt'))
   async paginate(@Req() req, @Query('page') page = 1, @Query('limit') limit = 10): Promise<Pagination<Project>> {
     const user = req.user as User;
-    return await this.projectService.paginate(
-      {
+    return await this.projectService.paginate({
+      options: {
         page,
         limit,
       },
-      user.id,
-    );
+      userId: user.id,
+    });
   }
 
   @Get('/:code')

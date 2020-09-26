@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { LovType } from './enum';
+import { LovType, TaskPriority, TaskType } from './enum';
 import { DateAudit } from '../../shared/entities';
 
 @Entity('lovs')
@@ -14,7 +14,7 @@ export class Lov extends DateAudit {
   type: LovType;
 
   @Column('text')
-  value: string;
+  value: TaskPriority | TaskType;
 
   @Column('text')
   text: string;

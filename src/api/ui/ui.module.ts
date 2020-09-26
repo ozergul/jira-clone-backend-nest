@@ -6,10 +6,12 @@ import { Lov } from '../lov/lov.entity';
 import { ProjectService } from '../project/project.service';
 import { Project } from '../project/project.entity';
 import { SharedModule } from '../../shared';
+import { TaskService } from '../task/task.service';
+import { Task } from '../task/task.entity';
 
 @Module({
-  imports: [SharedModule, TypeOrmModule.forFeature([Lov, Project])],
+  imports: [SharedModule, TypeOrmModule.forFeature([Lov, Project, Task])],
   controllers: [UiController],
-  providers: [LovService, ProjectService],
+  providers: [LovService, ProjectService, TaskService],
 })
 export class UiModule {}

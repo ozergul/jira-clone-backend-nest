@@ -27,7 +27,7 @@ export class ProjectService {
     return this.projectRepository.findOne({ id });
   }
 
-  async paginate(options: IPaginationOptions, userId: number): Promise<Pagination<Project>> {
+  async paginate({ options, userId }: { options: IPaginationOptions; userId: number }): Promise<Pagination<Project>> {
     const queryBuilder = this.projectRepository.createQueryBuilder('project');
     queryBuilder.orderBy('project.updatedAt', 'DESC');
     queryBuilder.where('project.createdBy = :createdBy', { createdBy: userId });

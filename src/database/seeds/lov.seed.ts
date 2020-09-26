@@ -1,6 +1,6 @@
 import { Factory, Seeder } from 'typeorm-seeding';
 import { Connection } from 'typeorm';
-import { LovType } from '../../api/lov/enum';
+import { LovType, TaskPriority, TaskType } from '../../api/lov/enum';
 import { Lov } from '../../api/lov/lov.entity';
 
 export default class LovSeed implements Seeder {
@@ -11,13 +11,13 @@ export default class LovSeed implements Seeder {
       .into('lovs')
       .values([
         // Priorities
-        { text: 'Low', type: LovType.TaskPriority, value: '0' },
-        { text: 'Medium', type: LovType.TaskPriority, value: '1' },
-        { text: 'Urgent', type: LovType.TaskPriority, value: '2' },
+        { text: 'Low', type: LovType.TASK_PRIORITY, value: TaskPriority.LOW },
+        { text: 'Medium', type: LovType.TASK_PRIORITY, value: TaskPriority.MEDIUM },
+        { text: 'Urgent', type: LovType.TASK_PRIORITY, value: TaskPriority.URGENT },
         // Types
-        { text: 'Task', type: LovType.TaskType, value: '0' },
-        { text: 'Bug', type: LovType.TaskType, value: '1' },
-        { text: 'Story', type: LovType.TaskType, value: '2' },
+        { text: 'Task', type: LovType.TASK_TYPE, value: TaskType.TASK },
+        { text: 'Bug', type: LovType.TASK_TYPE, value: TaskType.BUG },
+        { text: 'Story', type: LovType.TASK_TYPE, value: TaskType.STORY },
       ] as Lov[])
       .execute();
   }

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterUserDto } from './dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -17,14 +18,21 @@ export class AuthService {
 
   async validateUser(payload: any): Promise<any> {
     const user = await this.usersService.findOne(payload.email);
+    const exception = new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     if (!user) {
-      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+      throw exception;
+    } else {
+      const passwordMatched = await bcrypt.compare(payload.password, user.password);
+
+      if (!passwordMatched) {
+        throw exception;
+      }
     }
     return user;
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+    const payload = { email: user.email, password: user.password, sub: user.id };
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -32,7 +40,6 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
-    const entity = Object.assign(new User(), registerUserDto);
-    return this.userRepository.save(entity);
+    return this.usersService.create(registerUserDto);
   }
 }

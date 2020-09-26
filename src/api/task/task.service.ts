@@ -4,6 +4,7 @@ import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginat
 import { Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto';
+import { State } from './models';
 
 @Injectable()
 export class TaskService {
@@ -12,8 +13,23 @@ export class TaskService {
     private taskRepository: Repository<Task>,
   ) {}
 
-  async paginate(options: IPaginationOptions): Promise<Pagination<Task>> {
-    return paginate<Task>(this.taskRepository, options);
+  async paginate({
+    options,
+    userId,
+    state,
+  }: {
+    options: IPaginationOptions;
+    userId: number;
+    state: State;
+  }): Promise<Pagination<Task>> {
+    const queryBuilder = this.taskRepository.createQueryBuilder('task');
+    if (state === State.ASSIGNED) {
+      queryBuilder.where('task.assigneeId = :assigneeId', { assigneeId: userId });
+    } else if (state === State.REPORTED) {
+      queryBuilder.where('task.reporterId = :reporterId', { reporterId: userId });
+    }
+
+    return paginate<Task>(queryBuilder, options);
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
