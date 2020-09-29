@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Task } from './task.entity';
 import { TaskService } from './task.service';
 import { Response } from 'express';
-import { CreateTaskDto } from './dto';
+import { CreateTaskDto, UpdateTaskDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { State } from './models';
@@ -63,6 +63,23 @@ export class TaskController {
 
       const savedTask = await this.taskService.save(task);
       res.status(HttpStatus.OK).send(savedTask);
+    } else {
+      res.status(HttpStatus.BAD_REQUEST).send();
+    }
+  }
+
+  @Get('/:taskId')
+  async getByTaskId(@Param() params): Promise<Task> {
+    return await this.taskService.getByTaskId(params.taskId);
+  }
+
+  @Put('/update')
+  @UseGuards(AuthGuard('jwt'))
+  async update(@Res() res: Response, @Body() updateTaskDto: UpdateTaskDto) {
+    const updated = await this.taskService.update(updateTaskDto);
+
+    if (updated) {
+      res.status(HttpStatus.OK).send();
     } else {
       res.status(HttpStatus.BAD_REQUEST).send();
     }
