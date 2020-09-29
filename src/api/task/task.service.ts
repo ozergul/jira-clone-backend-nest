@@ -29,11 +29,18 @@ export class TaskService {
       queryBuilder.where('task.reporterId = :reporterId', { reporterId: userId });
     }
 
-    return paginate<Task>(queryBuilder, options);
+    queryBuilder.leftJoinAndSelect('task.type', 'type');
+    queryBuilder.leftJoinAndSelect('task.priority', 'priority');
+
+    return await paginate<Task>(queryBuilder, options);
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const entity = Object.assign(new Task(), createTaskDto);
+    return this.taskRepository.save(entity);
+  }
+
+  async save(entity: Partial<Task>): Promise<Task> {
     return this.taskRepository.save(entity);
   }
 }

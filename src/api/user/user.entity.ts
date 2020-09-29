@@ -21,7 +21,7 @@ export class User extends DateAudit {
   @Exclude()
   password: string;
 
-  @Column({ type: 'text', default: 'tr-TR' })
+  @Column({ type: 'text', default: 'en-US' })
   language: string;
 
   @BeforeInsert()

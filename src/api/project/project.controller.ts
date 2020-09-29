@@ -51,7 +51,7 @@ export class ProjectController {
   @UseGuards(AuthGuard('jwt'))
   async create(@Req() req, @Res() res: Response, @Body() createProjectDto: CreateProjectDto) {
     const user = req.user as User;
-    const code = createProjectDto.code;
+    const code = createProjectDto.code.toLocaleUpperCase();
     const isExist = await this.projectService.findByCode(code);
 
     if (isExist) {

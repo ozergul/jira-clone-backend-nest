@@ -19,4 +19,8 @@ export class LovService {
       },
     });
   }
+
+  async findById(id: number): Promise<Lov> {
+    return this.lovRepository.findOne({ id });
+  }
 }

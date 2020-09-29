@@ -16,10 +16,11 @@ export class ProjectService {
 
   async create(params: CreateProjectDto & { createdBy: number }): Promise<Project> {
     const entity = Object.assign(new Project(), params);
-    return this.projectRepository.save(entity);
+    return this.save(entity);
   }
 
   async findByCode(code: string): Promise<Project> {
+    code = code.toLocaleUpperCase();
     return this.projectRepository.findOne({ code });
   }
 
@@ -35,7 +36,8 @@ export class ProjectService {
   }
 
   async update(updateProjectDto: UpdateProjectDto): Promise<Project> {
-    return this.projectRepository.save(updateProjectDto);
+    const entity = Object.assign(new Project(), updateProjectDto);
+    return this.projectRepository.save(entity);
   }
 
   async complete(id: number): Promise<UpdateResult> {
@@ -48,5 +50,9 @@ export class ProjectService {
 
   async getAll(): Promise<Project[]> {
     return this.projectRepository.find();
+  }
+
+  async save(entity: Partial<Project>): Promise<Project> {
+    return this.projectRepository.save(entity);
   }
 }

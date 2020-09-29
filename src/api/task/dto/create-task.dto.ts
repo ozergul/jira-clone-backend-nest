@@ -8,4 +8,19 @@ export class CreateTaskDto {
 
   @ApiProperty()
   readonly description: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  readonly projectId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  readonly priorityId: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  readonly typeId: number;
+
+  @ApiProperty()
+  readonly assigneeId: number;
 }

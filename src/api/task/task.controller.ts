@@ -8,11 +8,17 @@ import { CreateTaskDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { State } from './models';
+import { LovService } from '../lov/lov.service';
+import { ProjectService } from '../project/project.service';
 
 @ApiTags('tasks')
 @Controller('/tasks')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly lovService: LovService,
+    private readonly projectService: ProjectService,
+  ) {}
 
   @Get('/')
   @UseGuards(AuthGuard('jwt'))
@@ -34,11 +40,29 @@ export class TaskController {
   }
 
   @Post('/create')
-  async create(@Res() res: Response, @Body() createTaskDto: CreateTaskDto) {
+  @UseGuards(AuthGuard('jwt'))
+  async create(@Req() req, @Res() res: Response, @Body() createTaskDto: CreateTaskDto) {
+    const user = req.user as User;
     const task = await this.taskService.create(createTaskDto);
 
     if (task) {
-      res.status(HttpStatus.OK).send(task);
+      if (!task.assigneeId) {
+        task.assigneeId = user.id;
+      }
+
+      const type = await this.lovService.findById(createTaskDto.typeId);
+      task.type = type;
+
+      const priority = await this.lovService.findById(createTaskDto.priorityId);
+      task.priority = priority;
+
+      const project = await this.projectService.findById(createTaskDto.projectId);
+      const taskId = `${project.code.toLocaleUpperCase()}-${task.id}`;
+
+      task.taskId = taskId;
+
+      const savedTask = await this.taskService.save(task);
+      res.status(HttpStatus.OK).send(savedTask);
     } else {
       res.status(HttpStatus.BAD_REQUEST).send();
     }
