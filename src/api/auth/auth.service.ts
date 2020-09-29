@@ -4,7 +4,6 @@ import { UserService } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
-import { RegisterUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class AuthService {
   ) {}
 
   async validateUser(payload: any): Promise<any> {
-    const user = await this.usersService.findOne(payload.email);
+    const user = await this.usersService.findOneByEmail(payload.email);
     const exception = new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     if (!user) {
       throw exception;
@@ -37,9 +36,5 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
-  }
-
-  async register(registerUserDto: RegisterUserDto): Promise<User> {
-    return this.usersService.create(registerUserDto);
   }
 }
