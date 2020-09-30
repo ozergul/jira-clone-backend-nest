@@ -50,6 +50,8 @@ export class TaskController {
         task.assigneeId = user.id;
       }
 
+      task.reporterId = user.id;
+
       const type = await this.lovService.findById(createTaskDto.typeId);
       task.type = type;
 

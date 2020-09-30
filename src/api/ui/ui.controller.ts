@@ -34,7 +34,10 @@ export class UiController {
       priorities,
       types,
       projects,
-      users: users.map(user => ({ id: user.id, fullName: `${user.firstName || ''} ${user.lastName || ''}` })),
+      users: users.map(user => ({
+        id: user.id,
+        fullName: `${user.firstName || ''} ${user.lastName || ''} - ${user.email}`,
+      })),
     };
   }
 

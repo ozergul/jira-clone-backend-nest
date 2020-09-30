@@ -31,6 +31,8 @@ export class TaskService {
       queryBuilder.where('task.reporterId = :reporterId', { reporterId: userId });
     }
 
+    queryBuilder.orderBy('task.updatedAt', 'DESC');
+
     queryBuilder.leftJoinAndSelect('task.type', 'type');
     queryBuilder.leftJoinAndSelect('task.priority', 'priority');
 
