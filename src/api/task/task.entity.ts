@@ -7,7 +7,7 @@ export class Task extends DateAudit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   taskId: string;
 
   @Column('text')
