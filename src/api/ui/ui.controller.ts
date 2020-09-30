@@ -9,6 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { Project } from '../project/project.entity';
 import { State } from '../task/models';
+import { UserService } from '../user/user.service';
 
 @ApiTags('ui')
 @Controller('/ui')
@@ -17,6 +18,7 @@ export class UiController {
     private readonly lovService: LovService,
     private readonly projectService: ProjectService,
     private readonly taskService: TaskService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('/create-task')
@@ -26,10 +28,13 @@ export class UiController {
     const priorities = await this.lovService.findAllByType(LovType.TASK_PRIORITY);
     const types = await this.lovService.findAllByType(LovType.TASK_TYPE);
     const projects = await this.last3Projects(user.id);
+    const users = await this.userService.findAll();
+
     return {
       priorities,
       types,
       projects,
+      users: users.map(user => ({ id: user.id, fullName: `${user.firstName || ''} ${user.lastName || ''}` })),
     };
   }
 

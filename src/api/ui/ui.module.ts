@@ -8,10 +8,12 @@ import { Project } from '../project/project.entity';
 import { SharedModule } from '../../shared';
 import { TaskService } from '../task/task.service';
 import { Task } from '../task/task.entity';
+import { User } from '../user/user.entity';
+import { UserService } from '../user/user.service';
 
 @Module({
-  imports: [SharedModule, TypeOrmModule.forFeature([Lov, Project, Task])],
+  imports: [SharedModule, TypeOrmModule.forFeature([Lov, Project, Task, User])],
   controllers: [UiController],
-  providers: [LovService, ProjectService, TaskService],
+  providers: [LovService, ProjectService, TaskService, UserService],
 })
 export class UiModule {}
