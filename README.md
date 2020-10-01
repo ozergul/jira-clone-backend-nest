@@ -6,6 +6,8 @@
 
 <img src="https://i.imgur.com/sQeXIMH.png" />
 
+This repo is used as backend in this repo: https://github.com/ozergul/jira-clone-frontend-angular
+
 ## First run
 
 To create some of entities please run:
