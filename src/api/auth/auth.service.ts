@@ -31,8 +31,19 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, password: user.password, sub: user.id };
+    const checkedUser = await this.usersService.findOneByEmail(user.email);
+    const exception = new HttpException('Bad Credentials', HttpStatus.UNAUTHORIZED);
+    if (!checkedUser) {
+      throw exception;
+    } else {
+      const passwordMatched = await bcrypt.compare(user.password, checkedUser.password);
 
+      if (!passwordMatched) {
+        throw exception;
+      }
+    }
+    
+    const payload = { email: user.email, password: user.password, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
