@@ -6,7 +6,7 @@
 
 <img src="https://i.imgur.com/sQeXIMH.png" />
 
-This repo is used as backend in this repo: https://github.com/ozergul/jira-clone-frontend-angular
+This repo is used as frontend in this repo: https://github.com/ozergul/jira-clone-frontend-angular
 
 ## First run
 
